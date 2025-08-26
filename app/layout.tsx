@@ -2,6 +2,9 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/dashboard/ui/theme-provider"
+import { ErrorProvider } from "@/core/state/error-context"
+import { ErrorBoundary } from "@/core/ui/error-boundary"
+import { ErrorStack } from "@/core/ui/error-stack"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +26,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}> 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          {children}
+          <ErrorProvider>
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
+            <ErrorStack />
+          </ErrorProvider>
         </ThemeProvider>
       </body>
     </html>

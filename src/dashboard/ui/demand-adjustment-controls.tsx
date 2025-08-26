@@ -40,14 +40,14 @@ export function DemandAdjustmentControls({
       <CardContent className="space-y-4 sm:space-y-6">
         <div className="space-y-3 sm:space-y-4">
           <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-            <label className="text-sm font-medium">Adjust Demand:</label>
+            <label className="text-sm font-medium" id="demand-adjust-label">Adjust Demand:</label>
             <span className={`text-sm font-medium ${getAdjustmentColor()}`}>
               {demandAdjustment > 0 ? "+" : ""}
               {demandAdjustment}%
             </span>
           </div>
 
-          <div className="px-1 sm:px-2">
+          <div className="px-1 sm:px-2" role="group" aria-roledescription="Demand adjustment keyboard control" aria-describedby="demand-adjust-help">
             <Slider
               value={[demandAdjustment]}
               onValueChange={(value) => onDemandAdjustmentChange(value[0])}
@@ -55,12 +55,39 @@ export function DemandAdjustmentControls({
               min={-50}
               step={5}
               className="w-full touch-manipulation"
+              aria-labelledby="demand-adjust-label"
+              aria-valuemin={-50}
+              aria-valuemax={100}
+              aria-valuenow={demandAdjustment}
+              aria-valuetext={`${demandAdjustment > 0 ? '+' : ''}${demandAdjustment}% demand adjustment`}
+              role="slider"
+              onKeyDown={(e) => {
+                const STEP = 5
+                const MIN = -50
+                const MAX = 100
+                if (e.key === 'ArrowLeft') {
+                  e.preventDefault()
+                  onDemandAdjustmentChange(Math.max(MIN, demandAdjustment - STEP))
+                } else if (e.key === 'ArrowRight') {
+                  e.preventDefault()
+                  onDemandAdjustmentChange(Math.min(MAX, demandAdjustment + STEP))
+                } else if (e.key === 'Home') {
+                  e.preventDefault()
+                  onDemandAdjustmentChange(MIN)
+                } else if (e.key === 'End') {
+                  e.preventDefault()
+                  onDemandAdjustmentChange(MAX)
+                }
+              }}
             />
             <div className="flex justify-between text-xs text-muted-foreground mt-2">
               <span>-50%</span>
               <span>0%</span>
               <span>+100%</span>
             </div>
+            <p id="demand-adjust-help" className="sr-only">
+              Use Left and Right arrow keys to decrease or increase demand by 5 percent. Home sets to -50 percent. End sets to 100 percent.
+            </p>
           </div>
         </div>
 

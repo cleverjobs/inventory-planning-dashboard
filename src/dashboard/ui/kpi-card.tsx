@@ -44,7 +44,11 @@ export function KPICard({
   }
 
   return (
-    <Card className={cn("transition-all hover:shadow-md", className)}>
+    <Card
+      className={cn("transition-all hover:shadow-md", className)}
+      role="group"
+      aria-label={`${title} KPI`}
+    >
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-center justify-between space-y-0 pb-2">
           <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>

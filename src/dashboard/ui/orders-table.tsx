@@ -126,12 +126,14 @@ export function OrdersTable({ orders, selectedStatus, onStatusFilter, statusCoun
           <span className="text-sm font-normal text-muted-foreground">{orders.length} orders</span>
         </CardTitle>
 
-        <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2" role="group" aria-label="Filter orders by status">
           <Button
             variant={selectedStatus === "all" ? "default" : "outline"}
             size="sm"
             onClick={() => onStatusFilter("all")}
             className="text-xs"
+      aria-pressed={selectedStatus === "all"}
+      aria-label="Show all orders"
           >
             All ({Object.values(statusCounts).reduce((a, b) => a + b, 0)})
           </Button>
@@ -140,6 +142,8 @@ export function OrdersTable({ orders, selectedStatus, onStatusFilter, statusCoun
             size="sm"
             onClick={() => onStatusFilter("planned")}
             className="text-xs"
+      aria-pressed={selectedStatus === "planned"}
+      aria-label="Show planned orders"
           >
             Planned ({statusCounts.planned || 0})
           </Button>
@@ -148,6 +152,8 @@ export function OrdersTable({ orders, selectedStatus, onStatusFilter, statusCoun
             size="sm"
             onClick={() => onStatusFilter("confirmed")}
             className="text-xs"
+      aria-pressed={selectedStatus === "confirmed"}
+      aria-label="Show confirmed orders"
           >
             Confirmed ({statusCounts.confirmed || 0})
           </Button>
@@ -156,6 +162,8 @@ export function OrdersTable({ orders, selectedStatus, onStatusFilter, statusCoun
             size="sm"
             onClick={() => onStatusFilter("delivered")}
             className="text-xs"
+      aria-pressed={selectedStatus === "delivered"}
+      aria-label="Show delivered orders"
           >
             Delivered ({statusCounts.delivered || 0})
           </Button>
@@ -164,59 +172,64 @@ export function OrdersTable({ orders, selectedStatus, onStatusFilter, statusCoun
       <CardContent>
         <div className="overflow-x-auto -mx-2 sm:mx-0">
           <div className="inline-block min-w-full align-middle">
-            <table className="min-w-full">
+      <table className="min-w-full" role="table" aria-label="Planned orders table">
               <thead>
                 <tr className="border-b">
-          <th className="text-left p-2 min-w-[120px]">
+      <th className="text-left p-2 min-w-[120px]" scope="col" aria-sort={sortField === 'orderDate' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSort("orderDate")}
                       className="h-auto p-1 font-medium text-xs sm:text-sm"
+            aria-label={`Sort by order date ${sortField === 'orderDate' ? (sortDirection === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
                     >
             Order Date
                       {getSortIcon("orderDate")}
                     </Button>
                   </th>
-          <th className="text-left p-2 min-w-[90px]">
+      <th className="text-left p-2 min-w-[90px]" scope="col" aria-sort={sortField === 'quantity' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSort("quantity")}
                       className="h-auto p-1 font-medium text-xs sm:text-sm"
+            aria-label={`Sort by quantity ${sortField === 'quantity' ? (sortDirection === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
                     >
             Quantity
                       {getSortIcon("quantity")}
                     </Button>
                   </th>
-                  <th className="text-left p-2 min-w-[80px] hidden sm:table-cell">
+          <th className="text-left p-2 min-w-[80px] hidden sm:table-cell" scope="col" aria-sort={sortField === 'unitCost' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSort("unitCost")}
                       className="h-auto p-1 font-medium text-xs sm:text-sm"
+            aria-label={`Sort by unit cost ${sortField === 'unitCost' ? (sortDirection === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
                     >
                       Unit Cost
                       {getSortIcon("unitCost")}
                     </Button>
                   </th>
-          <th className="text-left p-2 min-w-[110px]">
+      <th className="text-left p-2 min-w-[110px]" scope="col" aria-sort={sortField === 'totalCost' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSort("totalCost")}
                       className="h-auto p-1 font-medium text-xs sm:text-sm"
+            aria-label={`Sort by total cost ${sortField === 'totalCost' ? (sortDirection === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
                     >
             Total Cost
                       {getSortIcon("totalCost")}
                     </Button>
                   </th>
-                  <th className="text-left p-2 min-w-[90px]">
+          <th className="text-left p-2 min-w-[90px]" scope="col" aria-sort={sortField === 'status' ? (sortDirection === 'asc' ? 'ascending' : 'descending') : 'none'}>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSort("status")}
                       className="h-auto p-1 font-medium text-xs sm:text-sm"
+            aria-label={`Sort by status ${sortField === 'status' ? (sortDirection === 'asc' ? 'descending' : 'ascending') : 'ascending'}`}
                     >
                       Status
                       {getSortIcon("status")}

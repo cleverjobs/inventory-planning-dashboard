@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
+import { useError } from "@/core/state/error-context"
 import { mockOrders, mockStockData, mockKPIMetrics } from "@/dashboard/lib/mock-data"
 import type { OrderData } from "@/dashboard/types"
 import { adjustDemandData, calculateAdjustedKPIs } from "@/dashboard/utils"
 
 export function useDashboardState() {
+  const { pushError } = useError()
   const [orders] = useState<OrderData[]>(mockOrders)
   const [demandAdjustment, setDemandAdjustment] = useState<number>(0)
   const [selectedOrderStatus, setSelectedOrderStatus] = useState<OrderData["status"] | "all">("all")
@@ -42,17 +44,30 @@ export function useDashboardState() {
   // Callbacks for state updates
   const handleDemandAdjustmentChange = useCallback((value: number) => {
     setIsLoading(true)
-    // Simulate async operation
+    // Simulate async operation with possible induced error
     setTimeout(() => {
-      setDemandAdjustment(value)
-      setIsLoading(false)
-    }, 100)
-  }, [])
+      try {
+        // Induce a controlled error when value hits a specific unlikely threshold (e.g., 55)
+        if (value === 55) {
+          throw new Error("Simulated processing failure at 55% adjustment. Try a different value or reset.")
+        }
+        setDemandAdjustment(value)
+      } catch (e: any) {
+        pushError(e instanceof Error ? e : new Error(String(e)))
+      } finally {
+        setIsLoading(false)
+      }
+    }, 120)
+  }, [pushError])
 
   const handleReset = useCallback(() => {
-    setDemandAdjustment(0)
-    setSelectedOrderStatus("all")
-  }, [])
+    try {
+      setDemandAdjustment(0)
+      setSelectedOrderStatus("all")
+    } catch (e: any) {
+      pushError(e instanceof Error ? e : new Error(String(e)))
+    }
+  }, [pushError])
 
   const handleOrderStatusFilter = useCallback((status: OrderData["status"] | "all") => {
     setSelectedOrderStatus(status)

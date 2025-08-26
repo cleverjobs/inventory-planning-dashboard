@@ -239,12 +239,12 @@ export function StockDemandChart({ data, className, forceMobile = false }: Stock
 
   if (!echartsLib) {
     return (
-      <Card className={className}>
+      <Card className={className} aria-busy="true" aria-live="polite">
         <CardHeader>
-          <CardTitle>Stock vs Demand Forecast</CardTitle>
+          <CardTitle id="stock-demand-chart-title">Stock vs Demand Forecast</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center h-[400px] text-muted-foreground">
+          <div className="flex items-center justify-center h-[400px] text-muted-foreground" role="status">
             Loading chart...
           </div>
         </CardContent>
@@ -253,10 +253,10 @@ export function StockDemandChart({ data, className, forceMobile = false }: Stock
   }
 
   return (
-    <Card className={className ? `w-full ${className}` : 'w-full'}>
+    <Card className={className ? `w-full ${className}` : 'w-full'} aria-describedby="stock-demand-chart-desc" aria-labelledby="stock-demand-chart-title" role="region">
       <CardHeader className="pb-2">
         <div className="flex flex-col gap-2">
-          <CardTitle className="text-base sm:text-lg">Stock vs Demand Forecast</CardTitle>
+          <CardTitle className="text-base sm:text-lg" id="stock-demand-chart-title">Stock vs Demand Forecast</CardTitle>
           {/* Mobile toggle row (separate line) */}
           <div className="flex sm:hidden justify-end">
             <Button
@@ -274,13 +274,14 @@ export function StockDemandChart({ data, className, forceMobile = false }: Stock
       </CardHeader>
       <CardContent>
         {/* Desktop / tablet control bar */}
-        <div className="hidden sm:flex mb-3 items-center justify-between gap-4">
-          <div className="flex items-center gap-6 text-sm text-muted-foreground select-none">
+        <div className="hidden sm:flex mb-3 items-center justify-between gap-4" role="toolbar" aria-label="Chart controls">
+          <div className="flex items-center gap-6 text-sm text-muted-foreground select-none" role="group" aria-label="Toggle series visibility">
             <button
               type="button"
               onClick={() => toggleLine('stockLevel')}
               aria-pressed={visibleLines.stockLevel}
               className={`flex items-center gap-2 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring rounded-sm ${visibleLines.stockLevel ? 'opacity-100' : 'opacity-40'}`}
+              aria-label={visibleLines.stockLevel ? 'Hide Stock Level series' : 'Show Stock Level series'}
             >
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: STOCK_COLOR }} />
               <span>{visibleLines.stockLevel ? 'Stock Level' : 'Stock Hidden'}</span>
@@ -290,6 +291,7 @@ export function StockDemandChart({ data, className, forceMobile = false }: Stock
               onClick={() => toggleLine('demand')}
               aria-pressed={visibleLines.demand}
               className={`flex items-center gap-2 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring rounded-sm ${visibleLines.demand ? 'opacity-100' : 'opacity-40'}`}
+              aria-label={visibleLines.demand ? 'Hide Demand series' : 'Show Demand series'}
             >
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: DEMAND_COLOR }} />
               <span>{visibleLines.demand ? 'Demand' : 'Demand Hidden'}</span>
@@ -306,14 +308,16 @@ export function StockDemandChart({ data, className, forceMobile = false }: Stock
             <span>{chartType === 'line' ? 'Bar View' : 'Line View'}</span>
           </Button>
         </div>
-  <div ref={chartRef} style={{ width: '100%', height: mobile ? 300 : 400 }} />
+  <div ref={chartRef} style={{ width: '100%', height: mobile ? 300 : 400 }} role="img" aria-label="Line and bar chart comparing stock levels and demand over time" />
 
-  <div className="flex justify-center space-x-6 mt-4">
+  <div className="flex justify-center space-x-6 mt-4" role="group" aria-label="Toggle series visibility (mobile)">
           <button
             onClick={() => toggleLine("stockLevel")}
             className={`flex items-center space-x-2 text-sm transition-opacity hover:opacity-80 ${
               visibleLines.stockLevel ? "opacity-100" : "opacity-50"
             }`}
+            aria-pressed={visibleLines.stockLevel}
+            aria-label={visibleLines.stockLevel ? 'Hide Stock Level series' : 'Show Stock Level series'}
           >
             <div className="w-3 h-0.5" style={{ backgroundColor: STOCK_COLOR }} />
             <span>Stock Level</span>
@@ -323,11 +327,16 @@ export function StockDemandChart({ data, className, forceMobile = false }: Stock
             className={`flex items-center space-x-2 text-sm transition-opacity hover:opacity-80 ${
               visibleLines.demand ? "opacity-100" : "opacity-50"
             }`}
+            aria-pressed={visibleLines.demand}
+            aria-label={visibleLines.demand ? 'Hide Demand series' : 'Show Demand series'}
           >
             <div className="w-3 h-0.5" style={{ backgroundColor: DEMAND_COLOR }} />
             <span>Demand</span>
           </button>
         </div>
+        <p id="stock-demand-chart-desc" className="sr-only">
+          Interactive chart showing stock levels and demand forecast by month. Use the buttons to toggle series visibility or switch between line and bar view.
+        </p>
       </CardContent>
     </Card>
   );

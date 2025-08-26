@@ -7,6 +7,7 @@ import { OrdersTable } from "@/dashboard/ui/orders-table"
 import { DashboardHeader } from "@/dashboard/ui/dashboard-header"
 import { useDashboardState } from "@/dashboard/hooks/use-dashboard-state"
 import { DollarSign, Boxes, TrendingUpDownIcon, CheckCircle2, Clock } from "lucide-react"
+import { useEffect, useState } from "react"
 
 export function Dashboard({ mobilePreview = false }: { mobilePreview?: boolean }) {
   const {
@@ -25,7 +26,15 @@ export function Dashboard({ mobilePreview = false }: { mobilePreview?: boolean }
     baselineKPIMetrics,
   } = useDashboardState()
 
-  const lastUpdated = new Date(adjustedKPIMetrics.lastUpdated).toLocaleString()
+  // Stabilize time formatting to avoid SSR/CSR mismatch
+  const [lastUpdatedDisplay, setLastUpdatedDisplay] = useState<{time: string; date: string}>({time: "--:--:--", date: "--/--/----"})
+  useEffect(() => {
+    const d = new Date(adjustedKPIMetrics.lastUpdated)
+    // Use fixed 24h format independent of locale to prevent mismatch
+    const time = d.toLocaleTimeString('en-GB', { hour12: false }) // HH:MM:SS
+    const date = d.toLocaleDateString('en-GB') // DD/MM/YYYY
+    setLastUpdatedDisplay({ time, date })
+  }, [adjustedKPIMetrics.lastUpdated])
 
   return (
     <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8">
@@ -84,8 +93,8 @@ export function Dashboard({ mobilePreview = false }: { mobilePreview?: boolean }
           />
           <KPICard
             title="Last Updated"
-            value={lastUpdated.split(",")[1]?.trim() || "Now"}
-            subtitle={lastUpdated.split(",")[0]}
+            value={lastUpdatedDisplay.time}
+            subtitle={lastUpdatedDisplay.date}
             icon={<Clock className="h-4 w-4" aria-hidden="true" />}
           />
         </div>

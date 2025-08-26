@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTheme } from "next-themes"
 import { Button } from "@/shared/ui/button"
-import { Monitor, Moon, SunMedium, Smartphone, XCircle } from "lucide-react"
+import { Monitor, Moon, SunMedium, Smartphone, Laptop } from "lucide-react"
 import { cn } from "@/shared/utils"
 
 interface PageHeaderProps {
@@ -30,41 +30,54 @@ export function PageHeader({ title = "Inventory Planning Dashboard", className, 
         </div>
         <div className="flex items-center gap-2">
           {/* Theme toggle group */}
-          <div className="flex items-center rounded-md border bg-muted/40 p-0.5">
-            {/* Light */}
-            <Button
-              type="button"
-              variant={theme === "light" ? "default" : "ghost"}
-              size="sm"
-              aria-label="Light theme"
-              onClick={() => setTheme("light")}
-              className="h-8 w-8 p-0"
+          {mounted && (
+            <div
+              className="flex items-center rounded-md border bg-muted/40 p-0.5"
+              role="radiogroup"
+              aria-label="Theme selection"
+              suppressHydrationWarning
             >
-              <SunMedium className="size-4" />
-            </Button>
-            {/* Dark */}
-            <Button
-              type="button"
-              variant={theme === "dark" ? "default" : "ghost"}
-              size="sm"
-              aria-label="Dark theme"
-              onClick={() => setTheme("dark")}
-              className="h-8 w-8 p-0"
-            >
-              <Moon className="size-4" />
-            </Button>
-            {/* System */}
-            <Button
-              type="button"
-              variant={theme === "system" ? "default" : "ghost"}
-              size="sm"
-              aria-label="System theme"
-              onClick={() => setTheme("system")}
-              className="h-8 w-8 p-0"
-            >
-              <Monitor className="size-4" />
-            </Button>
-          </div>
+              {/* Light */}
+              <Button
+                type="button"
+                variant={theme === "light" ? "default" : "ghost"}
+                size="sm"
+                aria-label="Light theme"
+                role="radio"
+                aria-checked={theme === "light"}
+                onClick={() => setTheme("light")}
+                className="h-8 w-8 p-0"
+              >
+                <SunMedium className="size-4" />
+              </Button>
+              {/* Dark */}
+              <Button
+                type="button"
+                variant={theme === "dark" ? "default" : "ghost"}
+                size="sm"
+                aria-label="Dark theme"
+                role="radio"
+                aria-checked={theme === "dark"}
+                onClick={() => setTheme("dark")}
+                className="h-8 w-8 p-0"
+              >
+                <Moon className="size-4" />
+              </Button>
+              {/* System */}
+              <Button
+                type="button"
+                variant={theme === "system" ? "default" : "ghost"}
+                size="sm"
+                aria-label="System theme"
+                role="radio"
+                aria-checked={theme === "system"}
+                onClick={() => setTheme("system")}
+                className="h-8 w-8 p-0"
+              >
+                <Monitor className="size-4" />
+              </Button>
+            </div>
+          )}
           {/* Mobile preview toggle */}
           <Button
             type="button"
@@ -75,7 +88,7 @@ export function PageHeader({ title = "Inventory Planning Dashboard", className, 
             onClick={() => onViewportModeChange?.(!isMobilePreview)}
             className="h-8 px-2"
           >
-            {isMobilePreview ? <XCircle className="size-4" /> : <Smartphone className="size-4" />}
+            {isMobilePreview ? <Laptop className="size-4" /> : <Smartphone className="size-4" />}
           </Button>
         </div>
       </div>
