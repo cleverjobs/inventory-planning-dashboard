@@ -50,8 +50,10 @@ Feature code lives under `src/dashboard`. Shared low‑level UI primitives in `s
 KPI cards, demand adjustment slider, table rendering, chart presence, and error boundary fallback.
 
 ## Future improvements
-- Real API + caching (SWR / React Query) & optimistic updates.
-- Scenario planning / what‑if curves.
-- Audit trail & role permissions.
-- a11y pass (axe) + keyboard shortcuts.
-- Visual regression / bundle analysis.
+- Simple API layer to swap mocks for real data
+- Basic caching (memory + browser) with refresh
+- Central data fetch hook; components stay dumb
+- Enforce clean imports between feature folders
+- Lazy load heavy chart code
+- Robust fetch: timeout + retry on network errors
+- CI: tests + lint + bundle size check
