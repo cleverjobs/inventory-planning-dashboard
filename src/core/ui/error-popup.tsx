@@ -2,7 +2,7 @@
 import { XCircle, RefreshCcw, TriangleAlert } from "lucide-react"
 import { Button } from "@/shared/ui/button"
 import { cn } from "@/shared/utils"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 
 interface ErrorPopupProps {
   error?: Error | null
@@ -14,14 +14,29 @@ interface ErrorPopupProps {
 export function ErrorPopup({ error, onDismiss, retry, fatal }: ErrorPopupProps) {
   const [visible, setVisible] = useState(true)
   useEffect(() => { setVisible(true) }, [error])
+  // Allow Escape key to dismiss (non-fatal) for faster UX.
+  useEffect(() => {
+    if (!visible || fatal) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') { setVisible(false); onDismiss?.() } }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [visible, fatal, onDismiss])
+  const handleDismiss = useCallback(() => {
+    setVisible(false)
+    onDismiss?.()
+  }, [onDismiss])
   if (!error || !visible) return null
 
   const message = error.message || 'Unexpected error occurred'
 
   return (
     <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4">
-      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
-      <div className={cn("relative w-full max-w-sm rounded-lg border bg-card shadow-lg p-5 space-y-4 animate-in fade-in slide-in-from-top-4")}>        
+      <div
+        className="absolute inset-0 bg-background/60 backdrop-blur-sm"
+        // Click on backdrop dismisses only for non-fatal errors.
+        onClick={!fatal ? handleDismiss : undefined}
+      />
+      <div className={cn("relative w-full max-w-sm rounded-lg border bg-card shadow-lg p-5 space-y-4 animate-in fade-in slide-in-from-top-4")}>
         <div className="flex items-start gap-3">
           <div className="mt-0.5 text-red-600">
             {fatal ? <XCircle className="h-6 w-6" /> : <TriangleAlert className="h-6 w-6" />}
@@ -37,7 +52,7 @@ export function ErrorPopup({ error, onDismiss, retry, fatal }: ErrorPopupProps) 
               <RefreshCcw className="h-3 w-3" /> Retry
             </Button>
           )}
-          <Button size="sm" variant={fatal ? 'destructive' : 'default'} onClick={onDismiss} className="gap-1">
+          <Button size="sm" variant={fatal ? 'destructive' : 'default'} onClick={handleDismiss} className="gap-1">
             {fatal ? 'Reload' : 'Dismiss'}
           </Button>
         </div>
