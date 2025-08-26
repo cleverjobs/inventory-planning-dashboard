@@ -78,12 +78,12 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Removed automatic prefers-color-scheme override.
+  next-themes already applies the '.dark' class based on system/user choice.
+  Keeping this block forced a dark background even when the user explicitly
+  selected the light theme on a dark-system setting (since ':root' matched regardless
+  of the 'light' class). If you want conditional system fallback without user override,
+  you could instead scope to ':root:not(.light):not(.dark)'. */
 
 body {
   background: var(--background);
